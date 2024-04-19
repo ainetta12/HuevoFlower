@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CameraMovement : MonoBehaviour
 {
@@ -9,6 +11,17 @@ public class CameraMovement : MonoBehaviour
 
    private Vector3 previousPosition;
    
+   Camera mainCamera;   
+   float  touchesPrevPosDifference, touchesCurPosDifference, zoomModifier;
+   Vector2 firstTouchPrevPos, secondTouchPrevPos;
+
+   [SerializeField] float zoomModifierSpeed = 0.1f;
+   [SerializeField] Text text;
+
+   void Start()
+   {
+     mainCamera = GetComponent<Camera> ();
+   }
     
     void Update()
     {
@@ -26,5 +39,36 @@ public class CameraMovement : MonoBehaviour
 
             previousPosition = cam.ScreenToViewportPoint(Input.mousePosition);
         }
+
+        if (Input.touchCount == 2)
+        {
+            Touch firstTouch = Input.GetTouch (0);
+            Touch secondTouch = Input.GetTouch (1);
+
+            firstTouchPrevPos = firstTouch.position - firstTouch.deltaPosition;
+            secondTouchPrevPos = secondTouch.position - secondTouch.deltaPosition;
+
+            touchesPrevPosDifference = (firstTouchPrevPos - secondTouchPrevPos).magnitude;
+            touchesCurPosDifference = (firstTouch.position - secondTouch.position).magnitude;
+
+            zoomModifier = (firstTouch.deltaPosition - secondTouch.deltaPosition).magnitude * zoomModifierSpeed;
+
+            if(touchesPrevPosDifference > touchesCurPosDifference)
+            {
+                mainCamera.orthographicSize += zoomModifier;
+        
+            }
+
+            if(touchesPrevPosDifference < touchesCurPosDifference)
+            {
+                mainCamera.orthographicSize += zoomModifier;
+        
+            }
+
+            mainCamera.orthographicSize = Mathf.Clamp (mainCamera.orthographicSize, 2f, 10f);
+            text.text = "Camera size" + mainCamera.orthographicSize;
+        }
     }
+
+    
 }
