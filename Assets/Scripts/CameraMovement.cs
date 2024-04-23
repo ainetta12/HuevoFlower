@@ -10,8 +10,7 @@ public class CameraMovement : MonoBehaviour
    [SerializeField] private Camera cam;
 
    private Vector3 previousPosition;
-   
-   Camera mainCamera;   
+    
    float  touchesPrevPosDifference, touchesCurPosDifference, zoomModifier;
    Vector2 firstTouchPrevPos, secondTouchPrevPos;
 
@@ -20,11 +19,13 @@ public class CameraMovement : MonoBehaviour
 
    void Start()
    {
-     mainCamera = GetComponent<Camera> ();
+     //cam = GetComponent<Camera> ();
    }
     
     void Update()
     {
+        text.text = Input.touchCount.ToString();
+
         if (Input.GetMouseButtonDown(0))
         {
             previousPosition = cam.ScreenToViewportPoint(Input.mousePosition);
@@ -55,19 +56,22 @@ public class CameraMovement : MonoBehaviour
 
             if(touchesPrevPosDifference > touchesCurPosDifference)
             {
-                mainCamera.orthographicSize += zoomModifier;
+                cam.orthographicSize += zoomModifier;
         
             }
 
             if(touchesPrevPosDifference < touchesCurPosDifference)
             {
-                mainCamera.orthographicSize += zoomModifier;
+                cam.orthographicSize += zoomModifier;
         
             }
 
-            mainCamera.orthographicSize = Mathf.Clamp (mainCamera.orthographicSize, 2f, 10f);
-            text.text = "Camera size" + mainCamera.orthographicSize;
+            cam.orthographicSize = Mathf.Clamp (cam.orthographicSize, 2f, 10f);
+
+            //touchcount -> do smthng
+
         }
+
     }
 
     
